@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Home Row Typing Practice</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f2f4f7;color:#222}
+.container{width:95%;max-width:1400px;margin:25px auto}
+h1{text-align:center;margin-bottom:8px}
+.subtitle{text-align:center;color:#555;margin-bottom:20px}
+.instructions{background:#fff3cd;padding:15px;border-radius:8px;text-align:center;margin-bottom:20px;font-size:18px}
+.instructions strong{font-size:22px}
+.stats{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.stat{background:white;min-width:150px;padding:12px 25px;text-align:center;border-radius:10px;box-shadow:0 2px 7px #0002}
+.stat strong{display:block;font-size:28px;margin-top:5px}
+.typing-container{background:white;padding:30px;border-radius:12px;box-shadow:0 2px 10px #0002}
+.buttons{text-align:center;margin:5px 0 25px}
+.bottom-buttons{margin-top:30px;margin-bottom:5px}
+button{padding:12px 30px;margin:5px;border:0;border-radius:7px;font-size:17px;cursor:pointer}
+#startBtn,#startBtnBottom{background:#198754;color:white}
+#restartBtn,#restartBtnBottom{background:#0d6efd;color:white}
+button:hover{opacity:.85}
+#typingText{font-family:"Courier New",monospace;font-size:30px;line-height:1.9;letter-spacing:2px;width:100%;white-space:normal;overflow-wrap:break-word;word-spacing:5px;min-height:500px;max-height:600px;overflow-y:auto;padding:20px;border:2px solid #ddd;border-radius:8px;background:#fafafa;outline:none;cursor:text;user-select:none}
+.correct{color:#198754}
+.incorrect{color:#dc3545;background:#ffd6d6}
+.current{background:#ffe69c;border-radius:4px}
+#result{text-align:center;font-size:22px;font-weight:bold;margin-top:20px;min-height:35px}
+.key-guide{text-align:center;margin-top:20px;font-family:"Courier New",monospace;font-size:24px;font-weight:bold}
+@media(max-width:800px){#typingText{font-size:24px;line-height:1.8}}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>⌨️ Home Row Typing Practice</h1>
+
+<div class="subtitle">
+Practice the A S D F G H J K L ; keys
+</div>
+
+<div class="instructions">
+Type the characters exactly as shown.
+<br><br>
+<strong>A S D F G H J K L ;</strong>
+<br><br>
+30 lines • 60% alternating groups of four
+<br>
+Press <strong>SPACE BAR</strong> after each group.
+</div>
+
+<div class="stats">
+<div class="stat">TIME<strong id="time">25:00</strong></div>
+<div class="stat">WPM<strong id="wpm">0</strong></div>
+<div class="stat">ACCURACY<strong id="accuracy">100%</strong></div>
+<div class="stat">ERRORS<strong id="errors">0</strong></div>
+</div>
+
+<div class="typing-container">
+
+<div class="buttons">
+<button id="startBtn" onclick="startTest()">START TEST</button>
+<button id="restartBtn" onclick="restartTest()">RESTART</button>
+</div>
+
+<div id="typingText" tabindex="0"></div>
+
+<div class="buttons bottom-buttons">
+<button id="startBtnBottom" onclick="startTest()">START TEST</button>
+<button id="restartBtnBottom" onclick="restartTest()">RESTART</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<div class="key-guide">
+A S D F G H J K L ;
+</div>
+
+</div>
+
+<script>
+
+/* ==========================================
+   30 LINES
+========================================== */
+
+const lines = [
+"ajsk dlf; ghaj skdl f;gh asdf jkl;",
+"ajdk slf; ghsj akdl fjg; fghj ghjk",
+"ahsj dkfl g;aj skjh adkl fj;h asdf fdsa",
+"akdl fj;g ahsj dkfl g;aj skjh fghj jkl;",
+"ajsk dlf; ghsj akdl f;gh asdf hgfd",
+"adkl fj;h skdl ghaj ajdk slf; jkl; fghj",
+"ahsj dkfl g;aj fj;h akdl skjh fdsa ;lkj",
+"ajsk dlf; ghaj skdl f;gh asdf ghjk",
+"ajdk slf; ghsj akdl fjg; fghj ;lkj",
+"ahsj dkfl g;aj skjh adkl fj;h hgfd asdf",
+
+"ajsk dlf; ghaj skdl f;gh jkl; fghj",
+"akdl fj;g ahsj dkfl g;aj skjh asdf fdsa",
+"ajdk slf; ghsj akdl fjg; ghjk ;lkj",
+"ahsj dkfl g;aj fj;h akdl skjh hgfd jhgf",
+"ajsk dlf; ghaj skdl f;gh asdf jkl;",
+"adkl fj;h skdl ghaj ajdk slf; fghj ghjk",
+"akdl fj;g ahsj dkfl g;aj skjh fdsa ;lkj",
+"ajsk dlf; ghsj akdl f;gh hgfd asdf",
+"ajdk slf; ghaj skdl fjg; jkl; fghj",
+"ahsj dkfl g;aj skjh adkl fj;h ghjk asdf",
+
+"ajsk dlf; ghaj skdl f;gh fdsa ;lkj",
+"akdl fj;g ahsj dkfl g;aj skjh hgfd",
+"ajdk slf; ghsj akdl fjg; asdf jkl;",
+"ahsj dkfl g;aj fj;h akdl skjh fghj",
+"ajsk dlf; ghaj skdl f;gh ghjk ;lkj",
+"adkl fj;h skdl ghaj ajdk slf; hgfd",
+"akdl fj;g ahsj dkfl g;aj skjh fdsa",
+"ajsk dlf; ghsj akdl f;gh asdf jkl;",
+"ajdk slf; ghaj skdl fjg; fghj ghjk",
+"ahsj dkfl g;aj skjh adkl fj;h ;lkj"
+];
+
+
+/* ==========================================
+   MAKE TEXT
+========================================== */
+
+const cleanText =
+    lines.join(" ");
+
+
+/* ==========================================
+   TYPING VARIABLES
+========================================== */
+
+const typingText =
+    document.getElementById("typingText");
+
+let typedText = "";
+let started = false;
+let timeLeft = 25 * 60;
+let timer = null;
+let startTime = null;
+
+
+/* ==========================================
+   DISPLAY TEXT
+========================================== */
+
+function displayText(){
+
+    typingText.innerHTML="";
+
+    for(let i=0;i<cleanText.length;i++){
+
+        const span=document.createElement("span");
+
+        span.className="char";
+
+        if(cleanText[i]===" "){
+            span.innerHTML="&nbsp;";
+        }else{
+            span.textContent=cleanText[i];
+        }
+
+        if(i===0){
+            span.classList.add("current");
+        }
+
+        typingText.appendChild(span);
+    }
+}
+
+displayText();
+
+
+/* ==========================================
+   START
+========================================== */
+
+function startTest(){
+
+    if(started)return;
+
+    started=true;
+    typedText="";
+    startTime=new Date();
+
+    document.getElementById("result").textContent="";
+
+    typingText.focus();
+
+    timer=setInterval(function(){
+
+        timeLeft--;
+
+        updateTimer();
+        updateResults();
+
+        if(timeLeft<=0){
+            finishTest();
+        }
+
+    },1000);
+}
+
+
+/* ==========================================
+   KEYBOARD
+========================================== */
+
+typingText.addEventListener("keydown",function(event){
+
+    if(!started)return;
+
+    if(event.key==="Backspace"){
+
+        event.preventDefault();
+
+        if(typedText.length>0){
+
+            typedText=typedText.slice(0,-1);
+
+            updateDisplay();
+            updateResults();
+        }
+
+        return;
+    }
+
+
+    if(event.key===" "){
+
+        event.preventDefault();
+
+        if(cleanText[typedText.length]===" "){
+
+            typedText+=" ";
+
+            updateDisplay();
+            updateResults();
+        }
+
+        return;
+    }
+
+
+    if(event.ctrlKey||event.altKey||event.metaKey){
+        return;
+    }
+
+
+    const allowedKeys="asdfghjkl;";
+
+
+    if(
+        event.key.length===1 &&
+        allowedKeys.includes(event.key.toLowerCase())
+    ){
+
+        event.preventDefault();
+
+        if(typedText.length<cleanText.length){
+
+            typedText+=event.key.toLowerCase();
+
+            updateDisplay();
+            updateResults();
+        }
+    }
+
+});
+
+
+/* ==========================================
+   DISPLAY UPDATE
+========================================== */
+
+function updateDisplay(){
+
+    const chars=
+        typingText.querySelectorAll(".char");
+
+    let errors=0;
+
+    chars.forEach(function(char,index){
+
+        char.classList.remove(
+            "correct",
+            "incorrect",
+            "current"
+        );
+
+        if(index<typedText.length){
+
+            if(
+                typedText[index]===
+                cleanText[index]
+            ){
+
+                char.classList.add("correct");
+
+            }else{
+
+                char.classList.add("incorrect");
+
+                errors++;
+            }
+        }
+    });
+
+
+    if(typedText.length<cleanText.length){
+
+        chars[typedText.length]
+            .classList.add("current");
+    }
+
+
+    document.getElementById("errors")
+        .textContent=errors;
+}
+
+
+/* ==========================================
+   TIMER
+========================================== */
+
+function updateTimer(){
+
+    let minutes=
+        Math.floor(timeLeft/60);
+
+    let seconds=
+        timeLeft%60;
+
+    if(seconds<10){
+        seconds="0"+seconds;
+    }
+
+    document.getElementById("time")
+        .textContent=
+        minutes+":"+seconds;
+}
+
+
+/* ==========================================
+   WPM / ACCURACY
+========================================== */
+
+function updateResults(){
+
+    if(typedText.length===0){
+
+        document.getElementById("wpm")
+            .textContent="0";
+
+        document.getElementById("accuracy")
+            .textContent="100%";
+
+        return;
+    }
+
+
+    let correct=0;
+
+    for(
+        let i=0;
+        i<typedText.length;
+        i++
+    ){
+
+        if(
+            typedText[i]===
+            cleanText[i]
+        ){
+
+            correct++;
+        }
+    }
+
+
+    let elapsed=
+        (new Date()-startTime)/1000;
+
+    if(elapsed<1){
+        elapsed=1;
+    }
+
+
+    let minutes=
+        elapsed/60;
+
+
+    let wpm=
+        Math.round(
+            (correct/5)/minutes
+        );
+
+
+    let accuracy=
+        Math.round(
+            (correct/
+            typedText.length)*100
+        );
+
+
+    document.getElementById("wpm")
+        .textContent=wpm;
+
+    document.getElementById("accuracy")
+        .textContent=accuracy+"%";
+}
+
+
+/* ==========================================
+   FINISH
+========================================== */
+
+function finishTest(){
+
+    clearInterval(timer);
+
+    timer=null;
+    started=false;
+
+    updateResults();
+
+    document.getElementById("result")
+        .textContent=
+        "TIME'S UP! YOUR FINAL RESULT IS SHOWN ABOVE.";
+}
+
+
+/* ==========================================
+   RESTART
+========================================== */
+
+function restartTest(){
+
+    clearInterval(timer);
+
+    timer=null;
+    started=false;
+
+    timeLeft=25*60;
+    typedText="";
+
+    document.getElementById("time")
+        .textContent="25:00";
+
+    document.getElementById("wpm")
+        .textContent="0";
+
+    document.getElementById("accuracy")
+        .textContent="100%";
+
+    document.getElementById("errors")
+        .textContent="0";
+
+    document.getElementById("result")
+        .textContent="";
+
+    displayText();
+
+    typingText.focus();
+}
+
+</script>
+
+</body>
+</html>
